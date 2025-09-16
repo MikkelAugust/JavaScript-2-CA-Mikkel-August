@@ -1,0 +1,70 @@
+<!-- index.html (project root) -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="%232563eb"/><text x="50%25" y="50%25" dy=".38em" text-anchor="middle" font-size="36" fill="white">B</text></svg>' />
+  <title>B.log — Home</title>
+  <meta name="description" content="B.log home" />
+  <link rel="stylesheet" href="src/styles/base.css" />
+  <link rel="stylesheet" href="src/styles/components.css" />
+  <link rel="stylesheet" href="/social-mpa/src/styles/pages/home.css" />
+
+</head>
+<body>
+  <!-- Simple public nav -->
+  <nav class="nav">
+    <div class="container nav-bar">
+      <a class="brand" href="./">
+        <span class="logo">B</span><span class="word">.log</span>
+      </a>
+      <div class="nav-menu" style="margin-left:auto">
+        <a class="nav-link" href="src/pages/login/login.html">Login</a>
+        <a class="btn primary" href="src/pages/register/register.html">Create account</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <section class="hero card">
+      <h1>Write. Share. Connect.</h1>
+      <p class="muted">A light social blog built on the Noroff v2 Social API.</p>
+      <div class="actions">
+        <a class="btn primary" href="src/pages/register/register.html">Get started</a>
+        <a class="btn" href="src/pages/login/login.html">I already have an account</a>
+      </div>
+    </section>
+
+    <section class="features">
+      <article class="card">
+        <h3>Post</h3>
+        <p>Create, edit, and delete your posts.</p>
+      </article>
+      <article class="card">
+        <h3>Discover</h3>
+        <p>Browse the global feed and search by keywords.</p>
+      </article>
+      <article class="card">
+        <h3>Profiles</h3>
+        <p>View profiles and see all posts by a user.</p>
+      </article>
+      <article class="card">
+        <h3>Follow</h3>
+        <p>Follow or unfollow users you care about.</p>
+      </article>
+    </section>
+  </main>
+
+  <footer class="site-foot">
+    <div class="container">
+      <small class="muted">© B.log</small>
+      <div class="cluster">
+        <a class="link" href="src/pages/login/login.html">Login</a>
+        <a class="link" href="src/pages/register/register.html">Register</a>
+      </div>
+    </div>
+  </footer>
+  <script type="module" src="home.js"></script>
+</body>
+</html>

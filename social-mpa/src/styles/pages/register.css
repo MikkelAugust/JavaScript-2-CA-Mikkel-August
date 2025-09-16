@@ -1,0 +1,5 @@
+main.container.auth-page{padding-block:var(--s-10)}
+main > h1{text-align:center; margin-bottom:var(--s-6)}
+#register-form.form.card{}
+#register-form details{border:1px dashed var(--border); border-radius:12px; padding:var(--s-3)}
+#register-form details>summary{cursor:pointer; font-weight:var(--fw-bold); margin:-.25rem 0 .25rem}

@@ -1,0 +1,30 @@
+main{
+    padding-block:var(--space-8)
+}
+
+#user-head{
+    margin:0 auto var(--space-6); 
+    max-width:1040px
+}
+
+#user-head.profile-hero{}
+
+#user-posts{
+    display:grid; 
+    gap:var(--space-4)
+}
+
+@media (min-width:800px){
+     #user-posts{
+        grid-template-columns:repeat(2,1fr)
+    } 
+}
+@media (min-width:1200px){
+     #user-posts{
+        grid-template-columns:repeat(3,1fr)
+    } 
+}
+
+#user-posts .post-card h3{
+    margin-bottom:.35rem
+}

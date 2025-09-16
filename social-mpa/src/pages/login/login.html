@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="icon"
+      href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="%232563eb"/><text x="50%25" y="50%25" dy=".38em" text-anchor="middle" font-size="36" fill="white">B</text></svg>'
+    />
+    <meta name="description" content="Login to your account" />
+    <meta name="author" content="Mikkel August Andaas" />
+    <link rel="stylesheet" href="../../styles/base.css" />
+    <link rel="stylesheet" href="../../styles/components.css" />
+    <link rel="stylesheet" href="../../styles/pages/login.css" />
+    <title>Login</title>
+  </head>
+  <body>
+    <div id="nav"></div>
+
+    <main class="container auth-page">
+      <h1>Login</h1>
+
+      <form id="login-form" class="card auth-card form">
+        <label>
+          Email
+          <input
+            name="email"
+            type="email"
+            required
+            placeholder="you@stud.noroff.no"
+            autocomplete="email"
+          />
+        </label>
+
+        <label>
+          Password
+          <input
+            name="password"
+            type="password"
+            required
+            minlength="8"
+            placeholder="Your password"
+            autocomplete="current-password"
+          />
+        </label>
+
+        <div class="actions">
+          <button class="btn primary" type="submit">Login</button>
+        </div>
+      </form>
+
+      <p class="center-text muted">
+        No account?
+        <a class="link" href="../register/register.html">Create one</a>
+      </p>
+    </main>
+
+    <script type="module" src="./login.js"></script>
+  </body>
+</html>

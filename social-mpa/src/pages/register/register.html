@@ -1,0 +1,118 @@
+<!-- src/pages/register/register.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="icon"
+      href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="%232563eb"/><text x="50%25" y="50%25" dy=".38em" text-anchor="middle" font-size="36" fill="white">B</text></svg>'
+    />
+    <meta name="description" content="Create author account" />
+    <meta name="author" content="Mikkel August Andaas" />
+    <link rel="stylesheet" href="../../styles/base.css" />
+    <link rel="stylesheet" href="../../styles/components.css" />
+    <link rel="stylesheet" href="../../styles/pages/register.css" />
+    <title>Create author account</title>
+  </head>
+  <body>
+    <div id="nav"></div>
+
+    <main class="container auth-page">
+      <h1>Create your profile</h1>
+
+      <form id="register-form" class="card auth-card form" novalidate>
+        <label>
+          Author handle (username)
+          <input
+            name="name"
+            required
+            minlength="3"
+            maxlength="20"
+            placeholder="my_username"
+            pattern="^[A-Za-z0-9_]+$"
+            title="3–20 chars. Letters, numbers, underscore only"
+            autocomplete="username"
+          />
+        </label>
+
+        <label>
+          Noroff student email
+          <input
+            name="email"
+            type="email"
+            required
+            placeholder="you@stud.noroff.no"
+            pattern="^[^@]+@stud\.noroff\.no$"
+            title="Use your stud.noroff.no email"
+            autocomplete="email"
+          />
+        </label>
+
+        <label>
+          Password
+          <input
+            name="password"
+            type="password"
+            required
+            minlength="8"
+            placeholder="Min 8 characters"
+            autocomplete="new-password"
+          />
+        </label>
+
+        <label>
+          Short author bio <small>(optional, max 160)</small>
+          <textarea
+            name="bio"
+            maxlength="160"
+            placeholder="Tech writer. Coffee person. Sharing frontend tips."
+          ></textarea>
+        </label>
+
+        <details>
+          <summary>Avatar (optional)</summary>
+          <div class="stack">
+            <input
+              name="avatarUrl"
+              type="url"
+              placeholder="https://.../avatar.jpg"
+            />
+            <input
+              name="avatarAlt"
+              maxlength="120"
+              placeholder="Alt text for avatar"
+            />
+          </div>
+        </details>
+
+        <details>
+          <summary>Banner (optional)</summary>
+          <div class="stack">
+            <input
+              name="bannerUrl"
+              type="url"
+              placeholder="https://.../banner.jpg"
+            />
+            <input
+              name="bannerAlt"
+              maxlength="120"
+              placeholder="Alt text for banner"
+            />
+          </div>
+        </details>
+
+        <div class="actions">
+          <button class="btn primary" type="submit">Create account</button>
+        </div>
+      </form>
+
+      <p class="center-text muted">
+        Already have an account?
+        <a class="link" href="../login/login.html">Login</a>
+      </p>
+    </main>
+
+    <script type="module" src="./register.js"></script>
+  </body>
+</html>
