@@ -1,10 +1,14 @@
 import { redirectIfAuthed } from "../../utils/guards.js";
 import { register as apiRegister, login } from "../../services/auth.js";
+import Spinner from "../../components/spinner.js";
 
 redirectIfAuthed();
 
 const form = document.querySelector("#register-form");
 const submitBtn = form?.querySelector('button[type="submit"]');
+const next =
+  new URLSearchParams(location.search).get("next") ||
+  new URL("../feed/feed.html", location.href).href;
 
 form?.addEventListener("submit", onSubmit);
 
@@ -23,7 +27,6 @@ async function onSubmit(e) {
   const bannerUrl = s(fd.get("bannerUrl"));
   const bannerAlt = s(fd.get("bannerAlt"));
 
-  // Client-side validation per spec
   if (!/^[A-Za-z0-9_]{3,20}$/.test(name))
     return fail("name", "3–20 chars. Letters, numbers, underscore.");
   if (!/^[^@]+@stud\.noroff\.no$/i.test(email))
@@ -53,12 +56,16 @@ async function onSubmit(e) {
     payload.banner = { url: bannerUrl, ...(bannerAlt ? { alt: bannerAlt } : {}) };
 
   submitBtnDisabled(true);
+  Spinner.show();
 
   try {
     await apiRegister(payload);
     await login({ email, password });
-    window.location.replace("../feed/feed.html");
+    Spinner.show();
+    location.replace(next);
+    return;
   } catch (err) {
+    Spinner.hide();
     console.error("REGISTER ERROR RAW:", err);
     const errs = err?.data?.errors;
     if (Array.isArray(errs) && errs.length) {
@@ -77,7 +84,6 @@ async function onSubmit(e) {
   }
 }
 
-/* Helpers */
 function s(v) { return (v ?? "").toString().trim(); }
 function isHttpUrl(u) {
   try { const url = new URL(u); return url.protocol === "http:" || url.protocol === "https:"; }

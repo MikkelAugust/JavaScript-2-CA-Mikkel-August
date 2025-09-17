@@ -1,4 +1,3 @@
-<!-- src/pages/register/register.html -->
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -10,8 +9,10 @@
     />
     <meta name="description" content="Create author account" />
     <meta name="author" content="Mikkel August Andaas" />
+    <script type="module" src="../../app/init.js"></script>
     <link rel="stylesheet" href="../../styles/base.css" />
     <link rel="stylesheet" href="../../styles/components.css" />
+    <link rel="stylesheet" href="../../styles/pages/nav.css" />
     <link rel="stylesheet" href="../../styles/pages/register.css" />
     <title>Create author account</title>
   </head>
@@ -109,10 +110,11 @@
 
       <p class="center-text muted">
         Already have an account?
-        <a class="link" href="../login/login.html">Login</a>
+        <a class="nav-link" data-link="login" data-next="feed">Login</a>
       </p>
     </main>
 
     <script type="module" src="./register.js"></script>
+    <script type="module" src="/social-mpa/src/components/links.js"></script>
   </body>
 </html>

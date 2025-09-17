@@ -1,4 +1,3 @@
-// src/pages/profile/profile.js
 import { requireAuth } from "../../utils/guards.js";
 import { mountNavbar } from "../../components/navbar.js";
 import * as Profiles from "../../services/profiles.js";
@@ -12,7 +11,7 @@ const head = document.querySelector("#user-head");
 const list = document.querySelector("#user-posts");
 
 const params = new URLSearchParams(location.search);
-const target = params.get("u") || store.user?.name; // my profile if no ?u=
+const target = params.get("u") || store.user?.name;
 if (!target) location.replace("../login/login.html");
 
 load();
@@ -21,7 +20,6 @@ async function load() {
   head.innerHTML = "<div class='card'>Loading…</div>";
   list.innerHTML = "";
 
-  // get profile + my following to know relation
   const [profile, me] = await Promise.all([
     Profiles.get(target, { _followers: true, _following: true }),
     Profiles.get(store.user.name, { _following: true })

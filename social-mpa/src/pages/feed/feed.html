@@ -9,9 +9,11 @@
     />
     <meta name="description" content="Feed page" />
     <meta name="author" content="Mikkel August Andaas" />
+    <script type="module" src="../../app/init.js"></script>
     <link rel="stylesheet" href="../../styles/base.css" />
     <link rel="stylesheet" href="../../styles/pages/feed.css" />
     <link rel="stylesheet" href="../../styles/components.css" />
+    <link rel="stylesheet" href="../../styles/pages/nav.css" />
     <title>Feed</title>
   </head>
   <body>
@@ -22,11 +24,13 @@
         <form id="create-form">
           <input name="title" required placeholder="Title" />
           <textarea name="body" required placeholder="What's up?"></textarea>
-          <button type="submit">Post</button>
+          <button class="postbtn" type="submit">Post</button>
         </form>
       </section>
       <section id="feed-list"></section>
     </main>
+    
     <script type="module" src="./feed.js"></script>
+    <script type="module" src="../../components/links.js"></script>
   </body>
 </html>

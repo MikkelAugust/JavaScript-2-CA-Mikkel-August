@@ -1,0 +1,25 @@
+.app-loader{
+  position:fixed; 
+  inset:0; 
+  display:grid; 
+  place-items:center;
+  background:color-mix(in oklab, var(--surface) 60%, transparent);
+  z-index:9999;
+  transition:opacity .25s var(--ease), visibility 0s linear .25s;
+}
+.app-loader.hidden{
+    opacity:0; visibility:hidden
+}
+
+.app-loader .spinner{
+  width:44px; 
+  height:44px; 
+  border-radius:50%;
+  background:conic-gradient(from 0turn, var(--primary) 0 25%, transparent 0 100%);
+  -webkit-mask:radial-gradient(farthest-side, transparent 55%, #000 56%);
+  mask:radial-gradient(farthest-side, transparent 55%, #000 56%);
+  animation:spin 1s linear infinite;
+  box-shadow:0 0 0 1px rgba(0,0,0,.05) inset;
+}
+
+@keyframes spin{to{transform:rotate(1turn)}}

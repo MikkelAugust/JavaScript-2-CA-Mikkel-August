@@ -1,4 +1,3 @@
-// src/services/posts.js  (unchanged except ensure _author true + search)
 import { api } from "./apiClient.js";
 import { CONFIG } from "../app/config.js";
 

@@ -1,4 +1,3 @@
-// src/services/apiClient.js
 import { CONFIG } from "../app/config.js";
 import { store } from "../state/store.js";
 
@@ -20,7 +19,7 @@ async function request(path, { method = "GET", body, headers } = {}) {
 
   const json = await res.json().catch(() => ({}));
   if (!res.ok) throw { status: res.status, data: json };
-  return json; // callers read json.data
+  return json;
 }
 
 export const api = {

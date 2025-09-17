@@ -9,8 +9,10 @@
     />
     <meta name="description" content="Login to your account" />
     <meta name="author" content="Mikkel August Andaas" />
+    <script type="module" src="../../app/init.js"></script>
     <link rel="stylesheet" href="../../styles/base.css" />
     <link rel="stylesheet" href="../../styles/components.css" />
+    <link rel="stylesheet" href="../../styles/pages/nav.css" />
     <link rel="stylesheet" href="../../styles/pages/login.css" />
     <title>Login</title>
   </head>
@@ -51,10 +53,12 @@
 
       <p class="center-text muted">
         No account?
-        <a class="link" href="../register/register.html">Create one</a>
+        <a class="btn primary" data-link="register" data-next="feed"
+            >create one</a
       </p>
     </main>
 
     <script type="module" src="./login.js"></script>
+    <script type="module" src="/social-mpa/src/components/links.js"></script>
   </body>
 </html>
