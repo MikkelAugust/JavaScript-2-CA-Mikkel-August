@@ -16,7 +16,7 @@
   display:inline-flex; 
   align-items:center; 
   justify-content:center; 
-  gap:.6ch;
+  gap: 10px;
   font-weight:var(--fw-bold);
   padding:.8rem 1.05rem; 
   border-radius:12px; 
@@ -62,6 +62,13 @@
   border-color:transparent;
   box-shadow:0 10px 24px rgba(37,99,235,.28);
 }
+
+
+.btn.primary:hover{
+  transform: scale(1.06);
+  box-shadow:0 10px 24px rgba(37,99,235,.28);
+}
+
 .btn.danger{
   background:linear-gradient(to bottom right, var(--danger), #d03333);
   color:#fff; 

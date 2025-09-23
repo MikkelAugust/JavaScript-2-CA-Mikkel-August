@@ -12,7 +12,19 @@ main{
   margin-bottom:var(--space-6);
 }
 
-/* grid */
+.toolbar{display:flex;gap:.5rem;align-items:center;margin:.5rem 0}
+#emoji-menu{position:relative}
+#emoji-menu>summary{cursor:pointer;list-style:none;}
+#emoji-menu>summary::-webkit-details-marker{display:none}
+.emoji-grid{
+  position:absolute;z-index:10;margin-top:.25rem;padding:.5rem;
+  display:grid;grid-template-columns:repeat(7,1.8rem);gap:.25rem;
+  background:var(--panel,#0b1020);border:1px solid var(--border,#243045);border-radius:.5rem
+}
+.emoji{font-size:1.1rem;line-height:1;padding:.25rem;background:transparent;border:none;cursor:pointer}
+.emoji:focus{outline:2px solid var(--primary,#2563eb);border-radius:.25rem}
+
+
 #feed-list{
   display:grid;
   gap:var(--space-4);
