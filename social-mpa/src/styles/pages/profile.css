@@ -7,7 +7,11 @@ main{
     max-width:1040px
 }
 
-#user-head.profile-hero{}
+#avatar-form[hidden]{ display:none !important; }
+.btn.small{ padding:.35rem .6rem; font-size:.875rem; border-radius:8px; }
+.avatar-wrap{ display:flex; flex-direction:column; align-items:flex-start; }
+
+
 
 #user-posts{
     display:grid; 

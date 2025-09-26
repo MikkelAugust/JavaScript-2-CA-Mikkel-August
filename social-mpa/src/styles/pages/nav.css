@@ -70,22 +70,132 @@
   background:var(--primary);
 }
 
-.nav-search input{
-  min-width:260px; 
-  padding:.6rem .9rem .6rem 2.2rem;
-  border-radius:999px;
-  border:1px solid var(--border); 
-  background:var(--surface);
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2390a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-3.5-3.5'/%3E%3C/svg%3E");
-  background-repeat:no-repeat; 
-  background-position:.7rem 50%;
+/* Compact, wrap-friendly typeahead */
+
+/* container */
+.nav-search{ 
+  position:relative; 
 }
 
-.nav-search input:focus{
-  outline:none; 
-  box-shadow:0 0 0 4px rgba(37,99,235,.18); 
-  border-color:#b9c8ff;
+/* popover */
+.nav-suggest{
+  position:absolute;
+  top:100%;
+  left:0;
+  right:0;
+  margin-top:.3rem;
+  padding:.25rem;
+  background:color-mix(in oklab, var(--surface) 98%, transparent);
+  border:1px solid var(--border);
+  border-radius:10px;
+  box-shadow:0 10px 24px rgba(2,6,23,.12);
+  list-style:none;
+  max-height:16rem;
+  overflow-y:auto;
+  overflow-x:hidden;
+  z-index:60;
 }
+
+.nav-suggest:empty{ display:none; }
+
+/* row */
+.nav-suggest .opt{
+  display:grid;
+  grid-template-columns: 30px 1fr auto;   /* smaller avatar */
+  align-items:center;
+  gap:.5rem;
+  padding:.45rem .55rem;
+  border-radius:8px;
+  cursor:pointer;
+  transition:background .15s ease;
+}
+
+.nav-suggest .opt:hover{ 
+  background:color-mix(in oklab, var(--primary) 10%, transparent);
+}
+.nav-suggest .opt.active{
+  background:color-mix(in oklab, var(--primary) 16%, transparent);
+}
+
+/* media cell */
+.opt-media{
+  width:30px; height:30px;
+  border-radius:7px;
+  background:color-mix(in oklab, var(--surface) 92%, transparent);
+  display:grid; place-items:center;
+  overflow:hidden;
+}
+.opt-media img{
+  width:100%; height:100%;
+  object-fit:cover;
+}
+.opt-fallback{ font-size:1rem; opacity:.85; }
+
+/* text cell */
+.opt-main{
+  min-width:0;
+  display:grid;
+  row-gap:.1rem;
+}
+
+/* allow full names and titles; clamp to 2 lines */
+.opt-title{
+  font-weight:600;
+  font-size:.92rem;
+  line-height:1.25;
+  white-space:normal;
+  overflow:hidden;
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+}
+
+/* one line for subtext */
+.opt-sub{
+  font-size:.82rem;
+  line-height:1.2;
+  color:var(--muted);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+/* badge cell smaller */
+.opt-meta{ display:flex; align-items:center; justify-content:flex-end; min-width:max-content; }
+.nav-suggest .badge{
+  font-size:.7rem;
+  line-height:1;
+  padding:.12rem .4rem;
+  border-radius:.4rem;
+  border:1px solid var(--border);
+  background:color-mix(in oklab, var(--surface) 90%, transparent);
+}
+
+/* mobile tweaks */
+@media (max-width: 879.98px){
+  .nav-suggest{
+    left:.6rem; right:.6rem;
+    border-radius:9px;
+    max-height:50vh;
+  }
+  .nav-suggest .opt{
+    grid-template-columns: 26px 1fr auto;
+    gap:.45rem;
+    padding:.4rem .5rem;
+  }
+  .opt-media{ width:26px; height:26px; border-radius:6px; }
+  .opt-title{ font-size:.9rem; }
+  .opt-sub{ font-size:.8rem; }
+}
+
+/* scrollbar polish */
+.nav-suggest::-webkit-scrollbar{ width:10px; }
+.nav-suggest::-webkit-scrollbar-thumb{
+  background:color-mix(in oklab, var(--border) 80%, transparent);
+  border:3px solid transparent;
+  border-radius:999px;
+  background-clip:padding-box;
+}
+
 
 .nav-actions{
   display:flex; 

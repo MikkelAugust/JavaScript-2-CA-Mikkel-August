@@ -88,3 +88,105 @@ main{
   outline-color:#b9c8ff;
   background:rgba(37,99,235,.06);
 }
+
+#post-root [hidden]{
+  display:none !important;
+}
+
+
+.reactions {
+  display: flex;
+  gap: .5rem;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: .75rem 0 0;
+  padding-top: .5rem;
+  border-top: 1px solid var(--border, #e5e7eb);
+}
+
+.react-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  padding: .35rem .6rem;
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: .65rem;
+  background: var(--card, #fff);
+  box-shadow: 0 1px 0 rgba(0,0,0,.03);
+  cursor: pointer;
+  font: inherit;
+  line-height: 1;
+  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease, background-color .15s ease;
+}
+
+.react-btn .sym {
+  line-height: 1;
+  font-size: 1rem;
+}
+
+.react-btn .cnt {
+  font-size: .85rem;
+  opacity: .85;
+  min-width: 1ch;
+  text-align: right;
+}
+
+.react-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0,0,0,.06);
+  border-color: var(--border-strong, #d1d5db);
+}
+
+.react-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(0,0,0,.05);
+}
+
+.react-btn:focus-visible {
+  outline: 2px solid var(--focus, #6366f1);
+  outline-offset: 2px;
+}
+
+.react-btn[data-active] {
+  background: color-mix(in oklab, var(--primary, #2563eb) 12%, white);
+  box-shadow: 0 2px 10px color-mix(in oklab, var(--primary, #2563eb) 18%, transparent);
+}
+
+.react-btn[data-active] .cnt {
+  opacity: 1;
+  font-weight: 600;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .react-btn {
+    transition: none;
+  }
+  .react-btn:hover,
+  .react-btn:active {
+    transform: none;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .reactions {
+    border-top-color: var(--border, #2a2f3a);
+  }
+  .react-btn {
+    background: var(--card, #0b1220);
+    border-color: var(--border, #2a2f3a);
+    box-shadow: 0 1px 0 rgba(0,0,0,.2);
+  }
+  .react-btn:hover {
+    box-shadow: 0 6px 16px rgba(0,0,0,.35);
+    border-color: var(--border-strong, #394151);
+  }
+  .react-btn[data-active] {
+    background: color-mix(in oklab, var(--primary, #3b82f6) 22%, #0b1220);
+    box-shadow: 0 2px 12px color-mix(in oklab, var(--primary, #3b82f6) 28%, transparent);
+  }
+}
+
+[contenteditable="true"]:focus {
+  outline-color: #b9c8ff;
+  background: rgba(37,99,235,.06);
+}

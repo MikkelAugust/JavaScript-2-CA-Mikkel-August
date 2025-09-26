@@ -6,19 +6,27 @@ async function request(path, { method = "GET", body, headers } = {}) {
   const token = store?.getToken?.() ?? localStorage.getItem(CONFIG.STORAGE.TOKEN);
   const apiKey = store?.apiKey ?? localStorage.getItem(CONFIG.STORAGE.API_KEY);
 
+  const baseHeaders = {
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...(apiKey ? { "X-Noroff-API-Key": apiKey } : {}),
+    ...(headers || {}),
+  };
+  if (body !== undefined) baseHeaders["Content-Type"] = "application/json";
+
   const res = await fetch(url, {
     method,
-    headers: {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...(apiKey ? { "X-Noroff-API-Key": apiKey } : {}),
-      ...(headers || {}),
-    },
-    body: body ? JSON.stringify(body) : undefined,
+    headers: baseHeaders,
+    body: body !== undefined ? JSON.stringify(body) : undefined,
   });
 
   const json = await res.json().catch(() => ({}));
-  if (!res.ok) throw { status: res.status, data: json };
+  if (!res.ok) {
+    const msg = json?.errors?.[0]?.message || json?.message || res.statusText || "Request failed";
+    const err = new Error(msg);
+    err.status = res.status;
+    err.data = json;
+    throw err;
+  }
   return json;
 }
 
