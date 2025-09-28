@@ -1,81 +1,97 @@
 import { api } from "./apiClient.js";
-import { norm, levenshtein } from "../utils/text.js";
 import { CONFIG } from "../app/config.js";
 
-const TTL_MS = 15000;
-const cache = new Map(); // key -> { at, items }
+/**
+ * Normalize: lowercase, trim, collapse spaces.
+ * @param {string} s
+ */
+function norm(s) {
+  return String(s || "").toLowerCase().replace(/\s+/g, " ").trim();
+}
 
-const key = (q) => `v1:${norm(q)}`;
-const get = (q) => { const k = key(q), v = cache.get(k); return v && (Date.now()-v.at<TTL_MS) ? v.items : null; };
-const set = (q, items) => cache.set(key(q), { at: Date.now(), items });
-
-function scoreText(query, text){
-  const q = norm(query), t = norm(text);
-  if (!q || !t) return 0;
-  if (t === q) return 100;
-  if (t.startsWith(q)) return 85;
-  if (t.includes(q)) return 65;
-  if (t.split(/\s+/).some(w => w.startsWith(q))) return 75;
-  const d = levenshtein(t, q, 2);
-  if (d === 1) return 55;
-  if (d === 2) return 45;
+/**
+ * Score relevance using simple heuristics.
+ * @param {string} q
+ * @param {string} text
+ */
+function scoreText(q, text) {
+  const query = norm(q);
+  const t = norm(text);
+  if (!query || !t) return 0;
+  if (t === query) return 100;
+  if (t.startsWith(query)) return 80;
+  if (t.includes(query)) return 60;
   return 0;
 }
 
-function scoreItem(query, it){
-  const clamp = (n, a, b)=>Math.max(a, Math.min(b, n));
-  if (it.type === "author"){
-    let s = scoreText(query, it.name) + 0.4 * scoreText(query, it.bio || "");
-    if (norm(it.name).startsWith(norm(query))) s += 8;
-    return s;
-  }
-  let s = scoreText(query, it.title) + 0.7 * scoreText(query, it.author || "");
-  const pop = Number(it.popularity || 0);
-  s += clamp(Math.log10(pop + 1) * 6, 0, 12);
-  const ts = it.created ? Date.parse(it.created) : 0;
-  if (ts) {
-    const days = (Date.now() - ts) / 86400000;
-    s += clamp(10 - Math.log2(days + 1), 0, 10);
-  }
-  return s;
-}
-
-export async function searchPostsAndProfiles(q){
-  const cached = get(q);
-  if (cached) return cached;
+/**
+ * Search posts and profiles. Returns up to 8 ranked results.
+ * @param {string} q
+ * @returns {Promise<Array<{type:"post"|"author"} & Record<string, any>>>}
+ */
+export async function searchPostsAndProfiles(q) {
+  const query = norm(q);
+  if (!query || query.length < 2) return [];
 
   const qs = new URLSearchParams({
-    q, limit: "12", sort: "created", sortOrder: "desc", _author: "true", _reactions: "true", _count: "true"
+    q: query,
+    limit: "12",
+    sort: "created",
+    sortOrder: "desc",
+    _author: "true",
+    _reactions: "true",
+    _count: "true",
   });
-  const [postsJson, profsJson] = await Promise.all([
-    api.get(`${CONFIG.ENDPOINTS.SOCIAL.POSTS}?${qs}`),
-    api.get(`${CONFIG.ENDPOINTS.SOCIAL.PROFILES}?${new URLSearchParams({ q, limit: "12" })}`)
-  ]);
 
-  const posts = (postsJson.data ?? postsJson ?? []).filter(p => p?.id).map(p => ({
-    type: "post",
-    id: p.id,
-    title: p.title || "(untitled)",
-    author: p?.author?.name || "unknown",
-    img: p?.media?.url || "",
-    created: p?.created || "",
-    popularity: Array.isArray(p?.reactions) ? p.reactions.reduce((n, r) => n + (r?.count || 0), 0) : 0
-  }));
+  /** @type {any} */ const postsEnv =
+    await api.get(`${CONFIG.ENDPOINTS.SOCIAL.POSTS}?${qs}`);
+  /** @type {any} */ const profsEnv =
+    await api.get(`${CONFIG.ENDPOINTS.SOCIAL.PROFILES}?${new URLSearchParams({ q: query, limit: "12" })}`);
 
-  const authors = (profsJson.data ?? profsJson ?? []).filter(u => u?.name).map(u => ({
-    type: "author",
-    name: u.name,
-    bio: u?.bio || "",
-    img: u?.avatar?.url || ""
-  }));
+  /** @type {any[]} */
+  const postsRaw = Array.isArray(postsEnv?.data) ? postsEnv.data : [];
+  /** @type {any[]} */
+  const profsRaw = Array.isArray(profsEnv?.data) ? profsEnv.data : [];
 
-  const ranked = [...authors, ...posts]
-    .map(it => ({ it, score: scoreItem(q, it) }))
-    .filter(x => x.score > 0)
-    .sort((a, b) => b.score - a.score)
-    .slice(0, 10)
-    .map(x => x.it);
+  const posts = postsRaw
+    .filter((p) => p && p.id)
+    .map(/** @param {any} p */(p) => ({
+      type: "post",
+      id: String(p.id),
+      title: p.title || "(untitled)",
+      author: p?.author?.name || "unknown",
+      img: p?.media?.url || "",
+      created: p?.created || "",
+      popularity: Array.isArray(p?.reactions)
+        ? /** @type {any[]} */ (p.reactions).reduce(
+            /** @param {number} acc @param {{count?:number}} rec */(acc, rec) => acc + (Number(rec?.count) || 0),
+          0
+        )
+        : 0,
+      _score: scoreText(query, p.title || "") + 0.5 * scoreText(query, p?.author?.name || ""),
+    }));
 
-  set(q, ranked);
+  const authors = profsRaw
+    .filter((u) => u && u.name)
+    .map(/** @param {any} u */(u) => ({
+      type: "author",
+      name: u.name,
+      bio: u?.bio || "",
+      img: u?.avatar?.url || "",
+      _score: scoreText(query, u.name) + 0.4 * scoreText(query, u?.bio || ""),
+    }));
+
+  /** @type {Array<{_score:number} & Record<string, any>>} */
+  const combined = [...authors, ...posts];
+
+  const ranked = combined
+    .filter(/** @param {{_score:number}} x */(x) => x._score > 0)
+    .sort(/** @param {{_score:number}} a @param {{_score:number}} b */(a, b) => b._score - a._score)
+    .slice(0, 8)
+    .map((x) => {
+      const { _score, ...it } = x;
+      return /** @type {any} */ (it);
+    });
+
   return ranked;
 }

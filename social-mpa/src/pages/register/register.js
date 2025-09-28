@@ -6,67 +6,53 @@ redirectIfAuthed();
 
 const form = document.querySelector("#register-form");
 const submitBtn = form?.querySelector('button[type="submit"]');
-const next =
-  new URLSearchParams(location.search).get("next") ||
-  new URL("../feed/feed.html", location.href).href;
+
+const params = new URLSearchParams(location.search);
+const next = params.get("next") || new URL("../feed/feed.html", location.href).href;
 
 form?.addEventListener("submit", onSubmit);
 
 async function onSubmit(e) {
   e.preventDefault();
+  if (!form) return;
   clearValidity();
 
   const fd = new FormData(form);
-  const name = s(fd.get("name"));
-  const email = s(fd.get("email")).toLowerCase();
-  const password = s(fd.get("password"));
-  const bio = s(fd.get("bio"));
+  const raw = Object.fromEntries(fd.entries());
 
-  const avatarUrl = s(fd.get("avatarUrl"));
-  const avatarAlt = s(fd.get("avatarAlt"));
-  const bannerUrl = s(fd.get("bannerUrl"));
-  const bannerAlt = s(fd.get("bannerAlt"));
+  const name       = s(raw.name);
+  const email      = s(raw.email).toLowerCase();
+  const password   = s(raw.password);
+  const bio        = s(raw.bio);
+  const avatarUrl  = s(raw.avatarUrl);
+  const avatarAlt  = s(raw.avatarAlt);
+  const bannerUrl  = s(raw.bannerUrl);
+  const bannerAlt  = s(raw.bannerAlt);
 
-  if (!/^[A-Za-z0-9_]{3,20}$/.test(name))
-    return fail("name", "3–20 chars. Letters, numbers, underscore.");
-  if (!/^[^@]+@stud\.noroff\.no$/i.test(email))
-    return fail("email", "Use your stud.noroff.no email.");
-  if (password.length < 8)
-    return fail("password", "Minimum 8 characters.");
-  if (bio && bio.length > 160)
-    return fail("bio", "Max 160 characters.");
-  if (avatarUrl && !isHttpUrl(avatarUrl))
-    return fail("avatarUrl", "Enter a valid http(s) URL.");
-  if (avatarAlt && !avatarUrl)
-    return fail("avatarUrl", "Avatar alt requires a URL.");
-  if (avatarAlt && avatarAlt.length > 120)
-    return fail("avatarAlt", "Max 120 characters.");
-  if (bannerUrl && !isHttpUrl(bannerUrl))
-    return fail("bannerUrl", "Enter a valid http(s) URL.");
-  if (bannerAlt && !bannerUrl)
-    return fail("bannerUrl", "Banner alt requires a URL.");
-  if (bannerAlt && bannerAlt.length > 120)
-    return fail("bannerAlt", "Max 120 characters.");
+  if (!/^[A-Za-z0-9_]{3,20}$/.test(name))  return fail("name", "3–20 chars. Letters, numbers, underscore.");
+  if (!/^[^@]+@stud\.noroff\.no$/i.test(email)) return fail("email", "Use your stud.noroff.no email.");
+  if (password.length < 8)                return fail("password", "Minimum 8 characters.");
+  if (bio && bio.length > 160)            return fail("bio", "Max 160 characters.");
+  if (avatarUrl && !isHttpUrl(avatarUrl)) return fail("avatarUrl", "Enter a valid http(s) URL.");
+  if (avatarAlt && !avatarUrl)            return fail("avatarUrl", "Avatar alt requires a URL.");
+  if (avatarAlt && avatarAlt.length > 120)return fail("avatarAlt", "Max 120 characters.");
+  if (bannerUrl && !isHttpUrl(bannerUrl)) return fail("bannerUrl", "Enter a valid http(s) URL.");
+  if (bannerAlt && !bannerUrl)            return fail("bannerUrl", "Banner alt requires a URL.");
+  if (bannerAlt && bannerAlt.length > 120)return fail("bannerAlt", "Max 120 characters.");
 
   const payload = { name, email, password };
   if (bio) payload.bio = bio;
-  if (avatarUrl)
-    payload.avatar = { url: avatarUrl, ...(avatarAlt ? { alt: avatarAlt } : {}) };
-  if (bannerUrl)
-    payload.banner = { url: bannerUrl, ...(bannerAlt ? { alt: bannerAlt } : {}) };
+  if (avatarUrl) payload.avatar = { url: avatarUrl, ...(avatarAlt ? { alt: avatarAlt } : {}) };
+  if (bannerUrl) payload.banner = { url: bannerUrl, ...(bannerAlt ? { alt: bannerAlt } : {}) };
 
-  submitBtnDisabled(true);
+  submitDisabled(true);
   Spinner.show();
 
   try {
     await apiRegister(payload);
     await login({ email, password });
-    Spinner.show();
     location.replace(next);
-    return;
   } catch (err) {
-    Spinner.hide();
-    console.error("REGISTER ERROR RAW:", err);
     const errs = err?.data?.errors;
     if (Array.isArray(errs) && errs.length) {
       const msgs = [];
@@ -76,11 +62,12 @@ async function onSubmit(e) {
         if (eObj?.message) msgs.push(eObj.message);
       }
       alert(msgs.join("\n"));
-      return;
+    } else {
+      alert(err?.data?.message || `HTTP ${err?.status || ""} — Registration failed`);
     }
-    alert(err?.data?.message || `HTTP ${err?.status || ""} — Registration failed`);
   } finally {
-    submitBtnDisabled(false);
+    Spinner.hide();
+    submitDisabled(false);
   }
 }
 
@@ -100,10 +87,10 @@ function setCustom(el, message) {
 }
 function clearValidity() {
   for (const el of form.elements) {
-    if (el instanceof HTMLElement && typeof el.setCustomValidity === "function") el.setCustomValidity("");
+    if (el && typeof el.setCustomValidity === "function") el.setCustomValidity("");
   }
 }
-function submitBtnDisabled(state) {
+function submitDisabled(state) {
   if (!submitBtn) return;
   submitBtn.disabled = state;
   submitBtn.textContent = state ? "Creating…" : "Create account";

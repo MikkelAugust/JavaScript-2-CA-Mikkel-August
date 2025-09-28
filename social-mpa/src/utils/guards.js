@@ -1,18 +1,32 @@
 import { store } from "../state/store.js";
 
+export const getToken = () => store?.getToken?.();
+
+/**
+ * @returns {boolean}
+ */
 export function requireAuth() {
-  if (store.getToken()) return;
-  const loginUrl = new URL("../login/login.html", location.href);
-  loginUrl.searchParams.set("next", location.href);
+  const token = getToken();
+  if (token) return true;
+
+  const { href } = location;
+  const loginUrl = new URL("../login/login.html", href);
+  loginUrl.searchParams.set("next", href);
   location.replace(loginUrl);
+  return false;
 }
 
-export function redirectIfAuthed() {
-  if (!store.getToken()) return;
-  const qs = new URLSearchParams(location.search);
-  const next = qs.get("next");
-  const dest = next
-    ? new URL(next, location.href).href
-    : new URL("../feed/feed.html", location.href).href;
+/**
+ * @param {string} [target=new URL("../feed/feed.html", location.href).href]
+ * @returns {boolean}
+ */
+export function redirectIfAuthed(target = new URL("../feed/feed.html", location.href).href) {
+  const token = getToken();
+  if (!token) return false;
+
+  const { search, href } = location;
+  const next = new URLSearchParams(search).get("next");
+  const dest = next ? new URL(next, href).href : target;
   location.replace(dest);
+  return true;
 }
